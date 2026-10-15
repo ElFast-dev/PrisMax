@@ -1,6 +1,6 @@
 # PrisMax — validación de Prisma
 
-Este repositorio público sirve únicamente como punto de ejecución de GitHub Actions. **El repositorio privado `ElFast-dev/Prisma` continúa siendo la fuente principal del código.** Este repositorio no contiene una copia del código de Prisma ni datos personales de Showly.
+Este repositorio público sirve únicamente como punto de ejecución de GitHub Actions. **El repositorio privado `ElFast-dev/Prisma` continúa siendo la fuente principal del código.** Este repositorio no contiene una copia del código de Prisma ni datos personales de Showly. La validación automática quedó centralizada aquí porque los jobs de Actions del repositorio privado estaban fallando antes de iniciar pasos; en Prisma se conserva un workflow manual como alternativa.
 
 ## Configuración inicial (una sola vez)
 
