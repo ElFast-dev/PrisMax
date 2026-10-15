@@ -1,0 +1,8 @@
+url=https://prisma-three-omega.vercel.app/
+home_http_status=200
+home_curl_exit=0
+title_match=0
+version_match=0
+sw_http_status=200
+sw_curl_exit=0
+shell_match=0
