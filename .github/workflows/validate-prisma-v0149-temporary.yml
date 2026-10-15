@@ -21,11 +21,11 @@ jobs:
             echo "::error::Missing PRISMA_REPO_TOKEN secret"
             exit 1
           fi
-      - name: Checkout private Prisma baseline branch
+      - name: Checkout private Prisma optimization branch
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: perf/benchmark-diversity-baseline-v0149
+          ref: perf/precompute-diversity-features-v0.14.10
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
       - name: Setup Node.js 22
