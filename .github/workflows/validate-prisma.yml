@@ -66,4 +66,4 @@ jobs:
           grep -F 'Prisma v0.14.8' <<< "$html"
           service_worker="$(curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 "$url/sw.js")"
           grep -F 'prisma-shell-v24' <<< "$service_worker"
-          echo "Producción responde y sirve Prisma v0.14.8 con shell cache v23."
+          echo "Producción responde y sirve Prisma v0.14.8 con shell cache v24."
