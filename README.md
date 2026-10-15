@@ -9,7 +9,7 @@ El workflow público necesita permiso de solo lectura para descargar el reposito
 1. Crea un **fine-grained personal access token** en GitHub que tenga acceso únicamente a `ElFast-dev/Prisma`. Concede `Contents: Read-only` (GitHub también requiere acceso de metadatos de lectura, incluido por defecto).
 2. Entra en **Settings → Secrets and variables → Actions** de este repositorio público: <https://github.com/ElFast-dev/PrisMax/settings/secrets/actions>.
 3. Crea un repository secret llamado exactamente `PRISMA_REPO_TOKEN` y pega el token ahí. No lo escribas en este README, en el código ni en una conversación.
-4. La rama `main` de Prisma se valida automáticamente una vez al día (12:15 UTC). También puedes iniciar una prueba manual desde **Actions → Validar Prisma privado → Run workflow**.
+4. La rama `main` de Prisma se valida automáticamente cada hora (minuto 17 UTC); cualquier cambio al workflow de PrisMax también dispara una validación. También puedes iniciar una prueba manual desde **Actions → Validar Prisma privado → Run workflow**.
 5. En una ejecución manual, introduce la rama, etiqueta o SHA de Prisma que quieres verificar. El valor predeterminado es `main`; para volver a probar la corrección v0.14.6, selecciona `fix/showly-import-metadata-v0.14.6`.
 
 ## Qué hace
