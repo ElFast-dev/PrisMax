@@ -1,14 +1,42 @@
-name: Inactive temporary Prisma validator
+name: Temporary validation for Prisma v0.14.10
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  disabled:
+  validate:
+    name: Node.js 22 · final v0.14.10 regression
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Temporary ranking benchmark is disabled
-        run: echo "No private code checkout or benchmark runs from this workflow."
+      - name: Verify private read access secret
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Missing PRISMA_REPO_TOKEN secret"
+            exit 1
+          fi
+      - name: Checkout private Prisma optimization branch
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: perf/precompute-diversity-features-v0.14.10
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax check
+        run: npm run check
+      - name: Run regression tests
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee /tmp/prisma-tests.txt
+          grep -F "precalcular los rasgos de diversidad no debe cambiar el top 48 ni su orden" /tmp/prisma-tests.txt || true
+          tail -n 12 /tmp/prisma-tests.txt >> "$GITHUB_STEP_SUMMARY"
