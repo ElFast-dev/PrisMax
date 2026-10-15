@@ -1,70 +1,14 @@
-name: Temporary baseline benchmark for Prisma ranking
+name: Inactive temporary Prisma validator
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Node.js 22 · baseline benchmark
+  disabled:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - name: Verify private read access secret
-        env:
-          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
-        run: |
-          if [ -z "$PRISMA_REPO_TOKEN" ]; then
-            echo "::error::Missing PRISMA_REPO_TOKEN secret"
-            exit 1
-          fi
-      - name: Checkout private Prisma optimization branch
-        uses: actions/checkout@v4
-        with:
-          repository: ElFast-dev/Prisma
-          ref: perf/precompute-diversity-features-v0.14.10
-          token: ${{ secrets.PRISMA_REPO_TOKEN }}
-          persist-credentials: false
-      - name: Setup Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - name: Syntax and regression tests
-        run: |
-          set -o pipefail
-          npm run check
-          npm test 2>&1 | tee /tmp/prisma-tests.txt
-          tail -n 12 /tmp/prisma-tests.txt >> "$GITHUB_STEP_SUMMARY"
-      - name: Benchmark ranking at Android catalog scale
-        run: |
-          node --input-type=module <<'NODE'
-          import { recommendMovies } from "./src/engine.js";
-          import { performance } from "node:perf_hooks";
-          const genres = ["Drama", "Comedia", "Ciencia ficción", "Misterio", "Acción", "Documental", "Fantasía"];
-          const languages = ["Español", "Inglés", "Francés", "Japonés"];
-          const films = Array.from({ length: 819 }, (_, i) => ({
-            id: "wide-" + i, title: "Película " + i,
-            genres: [genres[i % genres.length], ...(i % 5 === 0 ? [genres[(i + 2) % genres.length]] : [])],
-            tags: ["tema-" + (i % 29), "tono-" + (i % 11)],
-            director: "Director " + (i % 37), language: languages[i % languages.length],
-            year: 1980 + (i % 44), moods: [i % 2 ? "pensar" : "desconectar"], tmdbScore: 3.1 + (i % 18) / 10
-          }));
-          const ratings = {};
-          for (let i = 0; i < 343; i++) ratings["wide-" + i] = i % 4 === 0 ? 3 : i % 5 === 0 ? 9 : i % 3 === 0 ? 8 : 6;
-          const state = { ratings, liked: ["wide-7", "wide-18", "wide-31"], disliked: ["wide-12", "wide-29"], watchlist: ["wide-180", "wide-211", "wide-245"] };
-          const run = () => recommendMovies(films, state, { mood: "pensar", limit: 48 });
-          const baselineRanking = run();
-          console.log("BENCH_IDS=" + baselineRanking.map(movie => movie.id).join(","));
-          const times = [];
-          for (let i = 0; i < 7; i++) {
-            const start = performance.now();
-            run();
-            times.push(performance.now() - start);
-          }
-          const sorted = [...times].sort((a, b) => a - b);
-          console.log("BENCH_MS=" + times.map(x => x.toFixed(2)).join(","));
-          console.log("BENCH_MEDIAN_MS=" + sorted[Math.floor(sorted.length / 2)].toFixed(2));
-          NODE
+      - name: Temporary validator is disabled
+        run: echo "Temporary ranking benchmark disabled; no checkout or test execution."
