@@ -1,0 +1,51 @@
+name: Validar Prisma privado
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Rama, etiqueta o SHA del repositorio privado Prisma"
+        required: true
+        type: string
+        default: "fix/showly-import-metadata-v0.14.6"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validar-prisma-privado
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Node.js 22 · sintaxis y pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Comprobar que existe el secreto de lectura
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Falta el secreto PRISMA_REPO_TOKEN en ElFast-dev/PrisMax. Debe ser un token con acceso de solo lectura al repositorio privado ElFast-dev/Prisma."
+            exit 1
+          fi
+
+      - name: Descargar la revisión privada de Prisma
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: ${{ inputs.ref }}
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Revisar sintaxis
+        run: npm run check
+
+      - name: Ejecutar pruebas
+        run: npm test
