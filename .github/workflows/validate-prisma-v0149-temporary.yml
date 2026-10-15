@@ -1,14 +1,42 @@
-name: Inactive temporary Prisma validator
+name: Final validation for Prisma local Termux host v0.14.11
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  disabled:
+  validate:
+    name: Node.js 22 · Termux local host and PWA
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Temporary local-host validation is disabled
-        run: echo "No private repository checkout or validation is run by this temporary workflow."
+      - name: Verify private read access secret exists
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Missing PRISMA_REPO_TOKEN read-only secret"
+            exit 1
+          fi
+      - name: Checkout private Prisma branch
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: feat/termux-local-server
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check Python server syntax
+        run: |
+          python3 --version
+          python3 -c "import ast, pathlib; ast.parse(pathlib.Path('termux/server.py').read_text(encoding='utf-8')); print('Python server syntax OK')"
+      - name: Check JavaScript syntax
+        run: npm run check
+      - name: Run full regression suite
+        run: npm test
