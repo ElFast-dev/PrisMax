@@ -55,3 +55,15 @@ jobs:
 
       - name: Ejecutar pruebas
         run: npm test
+
+      - name: Comprobar la publicación de producción
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://prisma-three-omega.vercel.app"
+          html="$(curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 "$url/")"
+          grep -F '<title>Prisma — descubre tu próxima película</title>' <<< "$html"
+          grep -F 'Prisma v0.14.6' <<< "$html"
+          service_worker="$(curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 "$url/sw.js")"
+          grep -F 'prisma-shell-v22' <<< "$service_worker"
+          echo "Producción responde y sirve Prisma v0.14.6 con shell cache v22."
