@@ -21,11 +21,11 @@ jobs:
             echo "::error::Missing PRISMA_REPO_TOKEN secret"
             exit 1
           fi
-      - name: Checkout private Prisma optimization branch
+      - name: Checkout private Prisma baseline branch
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: perf/precompute-diversity-features-v0.14.10
+          ref: perf/benchmark-diversity-baseline-v0149
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
       - name: Setup Node.js 22
@@ -56,7 +56,8 @@ jobs:
           for (let i = 0; i < 343; i++) ratings["wide-" + i] = i % 4 === 0 ? 3 : i % 5 === 0 ? 9 : i % 3 === 0 ? 8 : 6;
           const state = { ratings, liked: ["wide-7", "wide-18", "wide-31"], disliked: ["wide-12", "wide-29"], watchlist: ["wide-180", "wide-211", "wide-245"] };
           const run = () => recommendMovies(films, state, { mood: "pensar", limit: 48 });
-          run();
+          const baselineRanking = run();
+          console.log("BENCH_IDS=" + baselineRanking.map(movie => movie.id).join(","));
           const times = [];
           for (let i = 0; i < 7; i++) {
             const start = performance.now();
