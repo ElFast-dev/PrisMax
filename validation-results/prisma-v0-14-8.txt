@@ -1,0 +1,12 @@
+tested_ref=perf/cache-home-recommendations-v0.14.8
+node_version=v22.23.3
+check_exit=0
+test_exit=0
+test_summary:
+# tests 48
+# pass 48
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+failing_tests:
