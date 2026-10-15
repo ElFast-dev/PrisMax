@@ -1,43 +1,14 @@
-name: Temporary validation for Prisma v0.14.9
+name: Inactive temporary Prisma validator
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Node.js 22 · syntax and tests
+  disabled:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - name: Check private repository read secret
-        env:
-          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
-        run: |
-          if [ -z "$PRISMA_REPO_TOKEN" ]; then
-            echo "::error::Missing PRISMA_REPO_TOKEN secret"
-            exit 1
-          fi
-      - name: Checkout private Prisma branch
-        uses: actions/checkout@v4
-        with:
-          repository: ElFast-dev/Prisma
-          ref: perf/explore-ranking-cache-v0.14.9
-          token: ${{ secrets.PRISMA_REPO_TOKEN }}
-          persist-credentials: false
-      - name: Setup Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - name: Check JavaScript syntax
-        run: npm run check
-      - name: Run test suite
-        run: |
-          set -o pipefail
-          npm test 2>&1 | tee /tmp/prisma-tests.txt
-          tail -n 10 /tmp/prisma-tests.txt >> "$GITHUB_STEP_SUMMARY"
+      - name: Temporary validator is disabled
+        run: echo "Temporary validation workflow disabled; no checkout or test execution."
