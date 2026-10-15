@@ -55,16 +55,3 @@ jobs:
 
       - name: Ejecutar pruebas
         run: npm test
-
-      # This is only a smoke test of the last public deployment. Prisma's Termux localhost install does not depend on Vercel, and the production deployment may lag private main if Vercel's build quota blocks deployment.
-      - name: Comprobar la publicación de producción
-        shell: bash
-        run: |
-          set -euo pipefail
-          url="https://prisma-three-omega.vercel.app"
-          html="$(curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 "$url/")"
-          grep -F '<title>Prisma — descubre tu próxima película</title>' <<< "$html"
-          grep -F 'Prisma v0.14.9' <<< "$html"
-          service_worker="$(curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 "$url/sw.js")"
-          grep -F 'prisma-shell-v25' <<< "$service_worker"
-          echo "Producción responde y sirve Prisma v0.14.9 con shell cache v25."
