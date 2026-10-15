@@ -1,0 +1,101 @@
+name: Validar Prisma v0.14.8 con resumen temporal
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prisma-v0148-result-temporal
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Node.js 22 · Prisma v0.14.8
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Comprobar secreto de lectura
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Falta PRISMA_REPO_TOKEN en PrisMax."
+            exit 1
+          fi
+
+      - name: Descargar rama privada de Prisma
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: perf/cache-home-recommendations-v0.14.8
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Ejecutar validaciones completas
+        shell: bash
+        run: |
+          set +e
+          npm run check > /tmp/prisma-check.log 2>&1
+          check_exit=$?
+          npm test > /tmp/prisma-test.log 2>&1
+          test_exit=$?
+          {
+            echo "tested_ref=perf/cache-home-recommendations-v0.14.8"
+            echo "node_version=$(node --version)"
+            echo "check_exit=$check_exit"
+            echo "test_exit=$test_exit"
+            echo "test_summary:"
+            grep -E '^# (tests|pass|fail|cancelled|skipped|todo)' /tmp/prisma-test.log
+            echo "failing_tests:"
+            grep '^not ok ' /tmp/prisma-test.log || true
+          } > /tmp/prisma-v0148-validation.txt
+          cat /tmp/prisma-v0148-validation.txt
+          if [ "$check_exit" -ne 0 ]; then
+            echo "::error::npm run check falló; consulta el resumen publicado en la rama temporal de resultados."
+          fi
+          if [ "$test_exit" -ne 0 ]; then
+            echo "::error::npm test falló; consulta el resumen publicado en la rama temporal de resultados."
+          fi
+
+      - name: Publicar solo el resumen agregado en una rama temporal
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/PrisMax
+          ref: main
+          token: ${{ github.token }}
+          path: runner-results
+          persist-credentials: true
+
+      - name: Guardar resumen sin código ni datos personales
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f /tmp/prisma-v0148-validation.txt ]; then
+            printf 'validation_report=missing\n' > /tmp/prisma-v0148-validation.txt
+          fi
+          cd runner-results
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B test-results/prisma-v0-14-8-validation
+          mkdir -p validation-results
+          cp /tmp/prisma-v0148-validation.txt validation-results/prisma-v0-14-8.txt
+          git add validation-results/prisma-v0-14-8.txt
+          git commit -m "Registra resultado temporal de pruebas Prisma v0.14.8" || true
+          git push --force origin test-results/prisma-v0-14-8-validation
+
+      - name: Hacer fallar el trabajo si una validación falló
+        if: always()
+        shell: bash
+        run: |
+          grep -q '^check_exit=0$' /tmp/prisma-v0148-validation.txt || exit 1
+          grep -q '^test_exit=0$' /tmp/prisma-v0148-validation.txt || exit 1
