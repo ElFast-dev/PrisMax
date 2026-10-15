@@ -1,14 +1,42 @@
-name: Inactive temporary Prisma validator
+name: Temporary baseline benchmark for Prisma ranking
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  disabled:
+  validate:
+    name: Node.js 22 · baseline engine benchmark
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Temporary validator is disabled
-        run: echo "Temporary validation workflow disabled; no checkout or test execution."
+      - name: Verify private read access secret
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Missing PRISMA_REPO_TOKEN secret"
+            exit 1
+          fi
+      - name: Checkout private Prisma baseline branch
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: perf/benchmark-diversity-baseline-v0149
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax check
+        run: npm run check
+      - name: Benchmark-equivalent deterministic ranking tests
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee /tmp/prisma-tests.txt
+          grep -F "el motor mantiene recomendaciones deterministas con 819 películas y 343 puntuaciones" /tmp/prisma-tests.txt
+          tail -n 12 /tmp/prisma-tests.txt >> "$GITHUB_STEP_SUMMARY"
