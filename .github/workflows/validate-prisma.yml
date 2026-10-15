@@ -56,6 +56,7 @@ jobs:
       - name: Ejecutar pruebas
         run: npm test
 
+      # This is only a smoke test of the last public deployment. Prisma's Termux localhost install does not depend on Vercel, and the production deployment may lag private main if Vercel's build quota blocks deployment.
       - name: Comprobar la publicación de producción
         shell: bash
         run: |
