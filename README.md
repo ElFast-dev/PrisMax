@@ -16,7 +16,9 @@ El workflow público necesita permiso de solo lectura para descargar el reposito
 
 - Descarga directamente de `ElFast-dev/Prisma` la revisión indicada; no sincroniza ni publica su código en PrisMax.
 - Ejecuta `npm run check` y `npm test` con Node.js 22 en un runner estándar `ubuntu-latest`.
-- No realiza despliegues, no cambia ramas en el repositorio principal y no copia perfiles personales.
+- Hace un smoke test HTTP sin credenciales de `https://prisma-three-omega.vercel.app/` y `/sw.js`; verifica título, versión de la app y versión de la caché del service worker.
+- Valida la rama `main` de Prisma cada hora (cron UTC minuto 17), al cambiar la configuración del runner y bajo demanda. La ejecución programada debe seguir observándose para confirmar que GitHub la lanza puntualmente.
+- No despliega cambios, no cambia ramas en el repositorio principal y no copia perfiles personales.
 - Usa `persist-credentials: false` para no dejar el token de acceso configurado en Git durante los pasos de prueba.
 
 ## Privacidad y facturación
