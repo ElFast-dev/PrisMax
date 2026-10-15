@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
   # Poll private main hourly because pushes to Prisma cannot start jobs in this public repository.
+  # Temporary verification target: perf/android-diagnostics-v0.14.7 (restore main after merge).
   schedule:
     - cron: "17 * * * *"
   workflow_dispatch:
