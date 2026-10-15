@@ -10,5 +10,5 @@ jobs:
   disabled:
     runs-on: ubuntu-latest
     steps:
-      - name: Temporary validator is disabled
-        run: echo "Temporary ranking benchmark disabled; no checkout or test execution."
+      - name: Temporary ranking benchmark is disabled
+        run: echo "No private code checkout or benchmark runs from this workflow."
