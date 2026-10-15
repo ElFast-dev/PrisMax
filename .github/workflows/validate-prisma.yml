@@ -1,8 +1,12 @@
 name: Validar Prisma privado
 
 on:
+  # Each change to the public runner configuration validates the latest private main.
+  push:
+    branches: [main]
+  # Poll private main hourly because pushes to Prisma cannot start jobs in this public repository.
   schedule:
-    - cron: "15 12 * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       ref:
