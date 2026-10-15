@@ -1,0 +1,47 @@
+name: Validar Prisma v0.14.8 (temporal)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validar-prisma-v0148-temporal
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Node.js 22 · sintaxis y pruebas v0.14.8
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Comprobar secreto de lectura
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Falta PRISMA_REPO_TOKEN en PrisMax."
+            exit 1
+          fi
+
+      - name: Descargar rama privada de Prisma
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: perf/cache-home-recommendations-v0.14.8
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Revisar sintaxis
+        run: npm run check
+
+      - name: Ejecutar todas las pruebas
+        run: npm test
