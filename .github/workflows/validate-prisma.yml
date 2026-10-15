@@ -5,7 +5,6 @@ on:
   push:
     branches: [main]
   # Poll private main hourly because pushes to Prisma cannot start jobs in this public repository.
-  # Temporary verification target: perf/android-diagnostics-v0.14.7 (restore main after merge).
   schedule:
     - cron: "17 * * * *"
   workflow_dispatch:
@@ -42,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'perf/android-diagnostics-v0.14.7' }}
+          ref: ${{ inputs.ref || 'main' }}
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
@@ -58,14 +57,13 @@ jobs:
         run: npm test
 
       - name: Comprobar la publicación de producción
-        if: ${{ inputs.ref == 'main' }}
         shell: bash
         run: |
           set -euo pipefail
           url="https://prisma-three-omega.vercel.app"
           html="$(curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 "$url/")"
           grep -F '<title>Prisma — descubre tu próxima película</title>' <<< "$html"
-          grep -F 'Prisma v0.14.6' <<< "$html"
+          grep -F 'Prisma v0.14.7' <<< "$html"
           service_worker="$(curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 "$url/sw.js")"
-          grep -F 'prisma-shell-v22' <<< "$service_worker"
-          echo "Producción responde y sirve Prisma v0.14.6 con shell cache v22."
+          grep -F 'prisma-shell-v23' <<< "$service_worker"
+          echo "Producción responde y sirve Prisma v0.14.7 con shell cache v23."
