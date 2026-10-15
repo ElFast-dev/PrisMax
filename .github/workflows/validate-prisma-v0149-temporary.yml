@@ -1,4 +1,4 @@
-name: Temporary validation for Prisma local Termux host
+name: Final validation for Prisma local Termux host v0.14.11
 
 on:
   push:
