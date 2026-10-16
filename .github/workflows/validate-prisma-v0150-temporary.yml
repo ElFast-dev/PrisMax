@@ -1,0 +1,37 @@
+name: Temporary validation Prisma v0.15.0
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Confirm read-only token exists
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Missing PRISMA_REPO_TOKEN in PrisMax."
+            exit 1
+          fi
+      - name: Checkout private Prisma candidate
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: feat/recommender-quality-v0.15.0
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check syntax
+        run: npm run check
+      - name: Run tests
+        run: npm test
