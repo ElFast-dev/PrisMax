@@ -1,0 +1,65 @@
+name: TEMP Validar línea base recomendador Prisma
+on:
+  push:
+    branches:
+      - validate-prisma-recommender-baseline-20261016
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-prisma-recommender-baseline-20261016
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Sintaxis, pruebas unitarias y E2E móvil
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Comprobar secreto de lectura
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Falta PRISMA_REPO_TOKEN (solo lectura) en ElFast-dev/PrisMax."
+            exit 1
+          fi
+
+      - name: Descargar candidata privada
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: test/recommender-contract-baseline-20261016
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+
+      - name: Revisar sintaxis
+        run: npm run check
+
+      - name: Ejecutar pruebas unitarias y registrar baseline
+        run: npm test
+
+      - name: Ejecutar pruebas del navegador móvil
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:browser
+
+      - name: Guardar trazas del simulador
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prisma-recommender-baseline-${{ github.run_id }}
+          path: |
+            test-results/browser/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
