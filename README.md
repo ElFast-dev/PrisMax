@@ -17,6 +17,7 @@ El workflow público necesita permiso de solo lectura para descargar el reposito
 - Descarga directamente de `ElFast-dev/Prisma` la revisión indicada; no sincroniza ni publica su código en PrisMax.
 - Ejecuta `npm run check` y `npm test` con Node.js 22 en un runner estándar `ubuntu-latest`. `check` valida también sintaxis de Python y los scripts Bash de Termux.
 - La prueba del endpoint de parada verifica que el mensaje indique cómo reiniciar manualmente con `bash ~/prisma/termux/start.sh`, sin depender de Termux:Widget.
+- En v0.14.15, las pruebas del informe diagnóstico comprueban el desglose opcional de almacenamiento y que solo se publique el tipo genérico permitido de la interacción más lenta.
 - Valida la rama `main` de Prisma cada hora (cron UTC minuto 17), al cambiar la configuración del runner y bajo demanda. La ejecución programada debe seguir observándose para confirmar que GitHub la lanza puntualmente.
 - No despliega cambios, no cambia ramas en el repositorio principal y no copia perfiles personales.
 - Usa `persist-credentials: false` para no dejar el token de acceso configurado en Git durante los pasos de prueba.
