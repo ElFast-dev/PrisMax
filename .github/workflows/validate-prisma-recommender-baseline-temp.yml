@@ -1,4 +1,4 @@
-name: TEMP Validar línea base recomendador Prisma · expectativas congeladas
+name: TEMP Validar candidata v0.20.0 contrato más línea base
 on:
   push:
     branches:
@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: test/recommender-contract-baseline-20261016
+          ref: test/recommender-contract-v0.20.0
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
