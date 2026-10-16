@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: validar-prisma-privado-e2e-${{ github.sha }}
+  group: validar-prisma-privado
   cancel-in-progress: false
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'test/browser-emulator-v0.19' }}
+          ref: ${{ inputs.ref || 'main' }}
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
