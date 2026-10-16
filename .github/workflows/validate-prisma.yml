@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: validar-prisma-privado
+  group: validar-prisma-privado-v2
   cancel-in-progress: false
 
 jobs:
