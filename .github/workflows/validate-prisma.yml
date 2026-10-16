@@ -68,3 +68,14 @@ jobs:
           else
             echo "La revisión todavía no incorpora test:browser; se omite E2E en esta versión."
           fi
+
+      - name: Guardar trazas del simulador
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prisma-browser-e2e-${{ github.run_id }}
+          path: |
+            test-results/browser/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
