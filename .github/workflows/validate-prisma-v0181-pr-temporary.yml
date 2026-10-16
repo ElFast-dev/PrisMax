@@ -1,3 +1,4 @@
+# Temporary validation branch; remove after validation.
 name: Validar candidata Prisma v0.18.1 por PR (temporal)
 
 on:
