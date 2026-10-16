@@ -1,0 +1,44 @@
+name: Validar candidato Prisma v0.14.17
+
+# Workflow temporal para comprobar el PR privado antes de integrarlo.
+# Solo lee Prisma, ejecuta sintaxis/pruebas y no publica ni despliega.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validar-candidato-prisma-v0-14-17
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Node.js 22 · validación completa del candidato
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Comprobar que existe el secreto de lectura
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Falta PRISMA_REPO_TOKEN en PrisMax."
+            exit 1
+          fi
+      - name: Descargar el candidato privado de Prisma
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: fix/engine-nonfinite-popularity-v0.14.17
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Revisar sintaxis
+        run: npm run check
+      - name: Ejecutar pruebas completas
+        run: npm test
