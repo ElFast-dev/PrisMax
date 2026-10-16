@@ -1,3 +1,4 @@
+# Temporary validation branch; remove this workflow after checking the private candidate.
 name: Validar candidata Prisma v0.18.0 por PR (temporal)
 
 on:
