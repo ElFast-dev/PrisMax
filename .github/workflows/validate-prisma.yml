@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Node.js 22 · sintaxis y pruebas
+    name: Node.js 22 · sintaxis JS/Python/Bash y pruebas
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
