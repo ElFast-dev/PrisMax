@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: validar-prisma-privado-v2
+  group: validar-prisma-pr38-20261016
   cancel-in-progress: false
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'main' }}
+          ref: ${{ inputs.ref || 'fix/watchlist-only-profile-signal-20261016' }}
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
