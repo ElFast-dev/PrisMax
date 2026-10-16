@@ -1,0 +1,39 @@
+name: Validar candidata Prisma v0.18.0 por PR (temporal)
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Node.js 22 · candidata v0.18.0
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Comprobar secreto de lectura
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Falta PRISMA_REPO_TOKEN para leer ElFast-dev/Prisma."
+            exit 1
+          fi
+      - name: Descargar candidata privada
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: fix/opaque-image-cache-quota-v0.18.0
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Revisar sintaxis
+        run: npm run check
+      - name: Ejecutar pruebas
+        run: npm test
