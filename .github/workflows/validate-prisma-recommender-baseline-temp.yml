@@ -1,4 +1,4 @@
-name: TEMP Validar línea base recomendador Prisma
+name: TEMP Validar línea base recomendador Prisma · expectativas congeladas
 on:
   push:
     branches:
