@@ -1,0 +1,43 @@
+name: Validar candidato privado Prisma v0.17.0 (temporal)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validar-prisma-v0170-candidato
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Node.js 22 · sintaxis y suite completa
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verificar secreto de lectura
+        env:
+          PRISMA_REPO_TOKEN: ${{ secrets.PRISMA_REPO_TOKEN }}
+        run: |
+          if [ -z "$PRISMA_REPO_TOKEN" ]; then
+            echo "::error::Falta PRISMA_REPO_TOKEN para el repositorio privado Prisma."
+            exit 1
+          fi
+      - name: Descargar rama candidata privada
+        uses: actions/checkout@v4
+        with:
+          repository: ElFast-dev/Prisma
+          ref: feat/device-performance-v0.17.0
+          token: ${{ secrets.PRISMA_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Revisar sintaxis
+        run: npm run check
+      - name: Ejecutar todas las pruebas
+        run: npm test
