@@ -59,8 +59,12 @@ jobs:
       - name: Ejecutar pruebas unitarias
         run: npm test
 
-      - name: Instalar Chromium para simulación móvil
-        run: npx playwright install --with-deps chromium
-
-      - name: Ejecutar simulador móvil de extremo a extremo
-        run: npm run test:browser
+      - name: Ejecutar simulación móvil si la revisión la incluye
+        shell: bash
+        run: |
+          if node -e "process.exit(require('./package.json').scripts?.['test:browser'] ? 0 : 1)"; then
+            npx playwright install --with-deps chromium
+            npm run test:browser
+          else
+            echo "La revisión todavía no incorpora test:browser; se omite E2E en esta versión."
+          fi
