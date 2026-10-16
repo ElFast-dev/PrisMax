@@ -26,7 +26,7 @@ jobs:
   validate:
     name: Node.js 22 · sintaxis JS/Python/Bash y pruebas
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Comprobar que existe el secreto de lectura
         env:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'main' }}
+          ref: ${{ inputs.ref || 'test/browser-emulator-v0.19' }}
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
@@ -50,8 +50,17 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Instalar dependencias de pruebas
+        run: npm install --no-audit --no-fund
+
       - name: Revisar sintaxis
         run: npm run check
 
-      - name: Ejecutar pruebas
+      - name: Ejecutar pruebas unitarias
         run: npm test
+
+      - name: Instalar Chromium para simulación móvil
+        run: npx playwright install --with-deps chromium
+
+      - name: Ejecutar simulador móvil de extremo a extremo
+        run: npm run test:browser
