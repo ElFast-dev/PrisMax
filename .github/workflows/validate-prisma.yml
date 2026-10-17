@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'main' }}
+          ref: research/temporal-eval-neighbor-ablation-20261017
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
