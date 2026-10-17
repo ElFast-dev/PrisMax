@@ -13,7 +13,7 @@ on:
         description: "Rama, etiqueta o SHA del repositorio privado Prisma"
         required: true
         type: string
-        default: "d2556b4b02bfe9da92832de6f14c8744609f2b05"
+        default: "main"
 
 permissions:
   contents: read
