@@ -1,7 +1,7 @@
 name: Validar Prisma privado
 
 on:
-  # Each change to the public runner configuration validates the latest private main.
+  # Revalidate current private main after Prisma PR #65; manual runs can still select a ref.
   push:
     branches: [main]
   # Poll private main hourly because pushes to Prisma cannot start jobs in this public repository.
