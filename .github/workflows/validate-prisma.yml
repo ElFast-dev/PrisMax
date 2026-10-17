@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'main' }}
+          ref: 1a040e712f7b38d6da19185693adbe0bd6662a7a
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
