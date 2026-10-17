@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: validar-prisma-privado-v2
+  group: validar-prisma-candidate-ux-v48-93f8
   cancel-in-progress: false
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'main' }}
+          ref: 93f8a9ba907d6f6cce28bdf1e53daaf323846ea3
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
