@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'research/local-tmdb-temporal-eval-20261016' }}
+          ref: ${{ inputs.ref || '389065275ac8059e2ae16fcba82ef2e7ba55f4c7' }}
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
