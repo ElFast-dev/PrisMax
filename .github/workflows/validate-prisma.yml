@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ElFast-dev/Prisma
-          ref: ${{ inputs.ref || 'main' }}
+          ref: ${{ inputs.ref || 'research/synthetic-generator-matrix-v0190' }}
           token: ${{ secrets.PRISMA_REPO_TOKEN }}
           persist-credentials: false
 
