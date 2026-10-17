@@ -1,3 +1,4 @@
+# Revalidar la candidata después de corregir el fixture de shell v57.
 name: Validar Prisma privado
 
 on:
